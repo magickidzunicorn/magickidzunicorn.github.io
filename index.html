@@ -690,12 +690,11 @@ button.btn { border: 0; width: 100%; font-family: inherit; cursor: pointer; }
     home.hidden = onSignin;
     signin.hidden = !onSignin || unlocked;
     reader.hidden = !onSignin || !unlocked;
-    if (onSignin) { window.scrollTo(0, 0); return; }
+    if (onSignin) { if (!unlocked) checkLock(); window.scrollTo(0, 0); return; }
     var el = h && h.length > 1 ? document.getElementById(h.slice(1)) : null;
     if (el) el.scrollIntoView();
   }
   window.addEventListener('hashchange', route);
-  route();
 
   /* ---- Decryption ---- */
   function bytes(b64) {
@@ -767,9 +766,47 @@ button.btn { border: 0; width: 100%; font-family: inherit; cursor: pointer; }
     if (el) el.scrollIntoView();
   });
 
+  /* ---- Wrong-password limit: 3 tries, then 24 hours paused in this browser.
+     This slows casual guessing on a device. It is not real security: clearing
+     site data resets it, and the encrypted notes can be guessed at offline. ---- */
+  var LIMIT = 3, LOCK_MS = 24 * 60 * 60 * 1000, KEY = 'tn-reader-attempts';
+  var memory = { fails: 0, until: 0 };
+  function loadAttempts() {
+    try {
+      var s = JSON.parse(localStorage.getItem(KEY) || 'null');
+      if (s && typeof s.fails === 'number') return s;
+    } catch (x) {}
+    return memory;
+  }
+  function saveAttempts(s) {
+    memory = s;
+    try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (x) {}
+  }
+  function lockedUntil() {
+    var s = loadAttempts();
+    if (s.until && s.until > Date.now()) return s.until;
+    if (s.until) saveAttempts({ fails: 0, until: 0 });
+    return 0;
+  }
+  function showLock(until) {
+    var when = new Date(until).toLocaleString('en-CA', {
+      weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'
+    });
+    err.textContent = 'Too many wrong passwords. Sign-in is paused on this device until ' + when + (/\.$/.test(when) ? '' : '.');
+    err.hidden = false;
+    pw.disabled = true; submit.disabled = true;
+  }
+  function checkLock() {
+    var until = lockedUntil();
+    if (until) { showLock(until); return true; }
+    pw.disabled = false; submit.disabled = false;
+    return false;
+  }
+
   /* ---- Sign in / sign out ---- */
   form.addEventListener('submit', async function (e) {
     e.preventDefault();
+    if (checkLock()) return;
     err.hidden = true;
     if (!pw.value) { err.textContent = 'Enter your password.'; err.hidden = false; pw.focus(); return; }
     if (!window.crypto || !crypto.subtle) {
@@ -779,15 +816,27 @@ button.btn { border: 0; width: 100%; font-family: inherit; cursor: pointer; }
     submit.disabled = true; submit.textContent = 'Signing in…';
     try {
       render(await decrypt(pw.value));
+      saveAttempts({ fails: 0, until: 0 });
       unlocked = true;
       pw.value = '';
       route();
     } catch (x) {
-      err.textContent = "That password didn't open your saved reading. Check it and try again.";
-      err.hidden = false;
-      pw.select();
+      var fails = (loadAttempts().fails || 0) + 1;
+      pw.value = '';
+      if (fails >= LIMIT) {
+        var until = Date.now() + LOCK_MS;
+        saveAttempts({ fails: 0, until: until });
+        showLock(until);
+      } else {
+        saveAttempts({ fails: fails, until: 0 });
+        var left = LIMIT - fails;
+        err.textContent = "That password didn't open your saved reading. " + left + (left === 1 ? ' try' : ' tries') + ' left on this device.';
+        err.hidden = false;
+        pw.focus();
+      }
     } finally {
-      submit.disabled = false; submit.textContent = 'Sign in';
+      submit.textContent = 'Sign in';
+      if (!lockedUntil()) submit.disabled = false;
     }
   });
 
@@ -799,6 +848,8 @@ button.btn { border: 0; width: 100%; font-family: inherit; cursor: pointer; }
     location.hash = '#top';
     route();
   });
+
+  route();
 })();
 </script>
 </body>
