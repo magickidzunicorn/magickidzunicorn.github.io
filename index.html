@@ -170,8 +170,11 @@ h2, h3, p { margin: 0; }
 .foot .mark { width: 30px; height: 30px; }
 .foot p { font-size: .85rem; max-width: 60ch; }
 .foot-row { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; border-top: 1px solid var(--mast-rule); padding-top: 14px; font-size: .8rem; }
-.quiet { color: var(--mast-muted); text-decoration: none; }
-.quiet:hover { color: var(--mast-ink); text-decoration: underline; text-underline-offset: 3px; }
+/* Reader sign-in link: still in place and clickable, but drawn invisibly */
+.quiet, .quiet:hover, .quiet:focus, .quiet:focus-visible, .quiet:active {
+  color: transparent; text-decoration: none; outline: none; cursor: default;
+  user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent;
+}
 
 /* Sign-in view */
 .signin { padding-block: 56px 24px; display: grid; justify-items: center; }
