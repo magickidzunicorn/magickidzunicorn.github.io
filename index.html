@@ -1,0 +1,805 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Tamarack News</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='6' fill='%23e3a628'/%3E%3Cpolygon fill='%230d1b2f' points='20,6 28,16 23.5,16 30,25 25,25 32,34 8,34 15,25 10,25 16.5,16 12,16'/%3E%3C/svg%3E">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..600&display=swap">
+<style>
+/* Layout: broadcast-news front page. Navy masthead, sticky section strip, lead story beside a most-read rail, image card grid, navy sports band, local city grid. */
+:root {
+  --bg: #ffffff;
+  --surface: #f0f3f7;
+  --ink: #0e1826;
+  --muted: #566273;
+  --rule: #dbe1e9;
+  --mast: #0d1b2f;
+  --mast-ink: #f4f7fb;
+  --mast-muted: #a8b5c6;
+  --mast-rule: #24354d;
+  --accent: #bf1430;
+  --on-accent: #ffffff;
+  --gold: #e3a628;
+  --display: "Archivo", "Arial Narrow", Arial, "Helvetica Neue", sans-serif;
+  --text: "Newsreader", Georgia, "Times New Roman", serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0b1119; --surface: #141c27; --ink: #e8edf3; --muted: #9eabbb; --rule: #243042;
+    --mast: #060c15; --mast-ink: #f1f5fa; --mast-muted: #8f9db0; --mast-rule: #1c2a3d;
+    --accent: #ff5d72; --on-accent: #1b0609; --gold: #f0b53c; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0b1119; --surface: #141c27; --ink: #e8edf3; --muted: #9eabbb; --rule: #243042;
+  --mast: #060c15; --mast-ink: #f1f5fa; --mast-muted: #8f9db0; --mast-rule: #1c2a3d;
+  --accent: #ff5d72; --on-accent: #1b0609; --gold: #f0b53c; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--display); font-size: 16px; line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+.container { max-width: 1200px; margin-inline: auto; padding-inline: 16px; }
+@media (min-width: 720px) { .container { padding-inline: 24px; } }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+h2, h3, p { margin: 0; }
+
+/* Masthead */
+.utility { background: var(--mast); color: var(--mast-muted); font-size: .78rem; letter-spacing: .02em; }
+.utility .container { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-block: 7px; }
+.mast { background: var(--mast); color: var(--mast-ink); border-top: 1px solid var(--mast-rule); }
+.mast .container { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 16px 18px; }
+.brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; color: var(--mast-ink); }
+.mark { width: 40px; height: 40px; flex: none; }
+.mark .bg { fill: var(--gold); }
+.mark .tree { fill: var(--mast); }
+.word { display: flex; align-items: baseline; gap: 8px; line-height: 1; }
+.word b { font-weight: 900; font-stretch: 115%; font-size: 1.6rem; letter-spacing: .02em; }
+.word span { font-weight: 500; font-stretch: 100%; font-size: 1.6rem; color: var(--gold); }
+.tagline { color: var(--mast-muted); font-family: var(--text); font-style: italic; font-size: 1rem; }
+@media (max-width: 640px) { .tagline { display: none; } .word b, .word span { font-size: 1.35rem; } }
+
+.sections { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-bottom: 1px solid var(--rule); }
+.sections ul { display: flex; gap: 2px; list-style: none; margin: 0; padding: 0; overflow-x: auto; scrollbar-width: none; }
+.sections ul::-webkit-scrollbar { display: none; }
+.sections a {
+  display: block; padding: 13px 10px 10px; font-weight: 700; font-size: .9rem; text-decoration: none;
+  white-space: nowrap; border-bottom: 3px solid transparent;
+}
+.sections li:first-child a { padding-left: 0; }
+.sections a[aria-current] { border-bottom-color: var(--accent); }
+.sections a:hover { color: var(--accent); }
+
+/* Shared story pieces */
+[id] { scroll-margin-top: 64px; }
+.art { display: block; width: 100%; max-width: 100%; height: auto; aspect-ratio: 16 / 9; border-radius: 6px; background: var(--surface); }
+.kicker { font-size: .74rem; font-weight: 800; text-transform: uppercase; letter-spacing: .09em; color: var(--accent); }
+.meta { font-size: .8rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.story { display: grid; gap: 8px; align-content: start; min-width: 0; }
+.story .art { margin-bottom: 6px; }
+.story h3 { font-size: 1.2rem; font-weight: 750; line-height: 1.2; text-wrap: balance; }
+.sum { font-family: var(--text); font-size: 1.02rem; line-height: 1.45; color: var(--muted); }
+
+.sec-head {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 22px; padding-bottom: 10px;
+  border-bottom: 2px solid var(--ink); font-size: 1rem; font-weight: 800; text-transform: uppercase; letter-spacing: .07em;
+}
+.sec-head::before { content: ""; width: 11px; height: 11px; background: var(--accent); flex: none; }
+
+/* Live strip */
+.live { display: flex; align-items: center; gap: 12px; padding-block: 14px; border-bottom: 1px solid var(--rule); }
+.live-tag {
+  flex: none; background: var(--accent); color: var(--on-accent); border-radius: 3px;
+  padding: 3px 8px 2px; font-size: .7rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+}
+.live p { font-weight: 650; font-size: .95rem; min-width: 0; }
+
+/* Top stories */
+.block { padding-block: 32px 8px; }
+.top-grid { display: grid; gap: 32px; }
+@media (min-width: 920px) { .top-grid { grid-template-columns: minmax(0, 1fr) 320px; } }
+.top-main { display: grid; gap: 32px; min-width: 0; }
+.lead { display: grid; gap: 10px; }
+.lead .art { margin-bottom: 8px; }
+.lead h3 {
+  font-size: clamp(1.75rem, 1.15rem + 2.3vw, 2.8rem); font-weight: 800; font-stretch: 90%;
+  line-height: 1.05; letter-spacing: -.012em; text-wrap: balance;
+}
+.lead .dek { font-family: var(--text); font-size: 1.2rem; line-height: 1.45; max-width: 40em; }
+.pair { display: grid; gap: 28px; padding-top: 28px; border-top: 1px solid var(--rule); }
+@media (min-width: 560px) { .pair { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; } }
+
+.most-read { background: var(--surface); border-radius: 6px; padding: 20px 20px 6px; align-self: start; }
+@media (min-width: 920px) { .most-read { position: sticky; top: 64px; } }
+.most-read h2 { font-size: .9rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+.most-read ol { list-style: none; margin: 0; padding: 0; counter-reset: mr; }
+.most-read li {
+  counter-increment: mr; display: grid; grid-template-columns: 2.1rem minmax(0, 1fr); gap: 8px;
+  padding-block: 14px; border-top: 1px solid var(--rule); font-weight: 700; line-height: 1.25;
+}
+.most-read li:first-child { border-top: 0; }
+.most-read li::before {
+  content: counter(mr); font-size: 1.85rem; font-weight: 800; font-stretch: 85%;
+  line-height: .95; color: var(--accent); font-variant-numeric: tabular-nums;
+}
+
+/* More news grid */
+.grid3 { display: grid; gap: 34px 24px; }
+@media (min-width: 560px) { .grid3 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 920px) { .grid3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.grid3 .art { aspect-ratio: 3 / 2; }
+
+/* Sports band */
+.band { background: var(--mast); color: var(--mast-ink); padding-block: 36px 44px; margin-top: 48px; }
+.band .sec-head { border-bottom-color: var(--mast-ink); }
+.band .sec-head::before { background: var(--gold); }
+.band .kicker { color: var(--gold); }
+.band .meta, .band .sum { color: var(--mast-muted); }
+.sports-grid { display: grid; gap: 28px; }
+@media (min-width: 760px) { .sports-grid { grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 32px; } }
+.sports-grid .lead h3 { font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.1rem); }
+.sports-grid .dek { color: var(--mast-ink); }
+.side { display: grid; align-content: start; }
+.side .story { padding-block: 18px; border-top: 1px solid var(--mast-rule); }
+.side .story:first-child { padding-top: 0; border-top: 0; }
+
+/* Local */
+.local-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: 0 24px; }
+@media (min-width: 560px) { .local-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 920px) { .local-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.local-grid li { display: grid; gap: 6px; align-content: start; padding-block: 16px 20px; border-top: 1px solid var(--rule); min-width: 0; }
+.local-grid h3 { font-size: 1.08rem; font-weight: 700; line-height: 1.25; text-wrap: balance; }
+.local-grid .kicker { color: var(--ink); }
+
+/* Footer */
+.foot { background: var(--mast); color: var(--mast-muted); margin-top: 48px; }
+.foot .container { display: grid; gap: 14px; padding-block: 28px 32px; }
+.foot .brand .word b, .foot .brand .word span { font-size: 1.15rem; }
+.foot .mark { width: 30px; height: 30px; }
+.foot p { font-size: .85rem; max-width: 60ch; }
+.foot-row { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; border-top: 1px solid var(--mast-rule); padding-top: 14px; font-size: .8rem; }
+.quiet { color: var(--mast-muted); text-decoration: none; }
+.quiet:hover { color: var(--mast-ink); text-decoration: underline; text-underline-offset: 3px; }
+
+/* Sign-in view */
+.signin { padding-block: 56px 24px; display: grid; justify-items: center; }
+.signin-card { width: 100%; max-width: 30rem; display: grid; gap: 16px; padding: 28px 24px; border: 1px solid var(--rule); border-radius: 8px; }
+@media (min-width: 560px) { .signin-card { padding: 36px 36px 32px; } }
+.signin-card h2 { font-size: 1.9rem; font-weight: 800; font-stretch: 92%; line-height: 1.1; }
+.signin-card p.body { font-family: var(--text); font-size: 1.1rem; line-height: 1.5; }
+.btn {
+  display: block; text-align: center; padding: 14px 18px; border-radius: 6px; text-decoration: none;
+  background: var(--accent); color: var(--on-accent); font-weight: 750; font-size: 1rem;
+}
+.btn:hover { filter: brightness(1.08); }
+button.btn { border: 0; width: 100%; font-family: inherit; cursor: pointer; }
+.btn[disabled] { opacity: .7; cursor: progress; filter: none; }
+.fine { font-size: .85rem; color: var(--muted); line-height: 1.5; }
+.back { font-size: .9rem; font-weight: 650; color: var(--accent); text-decoration: none; justify-self: start; }
+.back:hover { text-decoration: underline; text-underline-offset: 3px; }
+.signin-form { display: grid; gap: 14px; }
+.field { display: grid; gap: 6px; }
+.field label { font-size: .85rem; font-weight: 700; }
+.field input {
+  font: inherit; font-size: 1rem; padding: 12px 14px; border-radius: 6px;
+  border: 1px solid var(--muted); background: var(--bg); color: var(--ink); width: 100%;
+}
+.error { color: var(--accent); font-size: .9rem; font-weight: 650; line-height: 1.4; }
+
+/* Reader view (shown only after the notes are decrypted) */
+.reader { padding-block: 40px 24px; }
+.reader-wrap { max-width: 42rem; margin-inline: auto; display: grid; gap: 28px; min-width: 0; }
+.reader-top {
+  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px;
+  padding-bottom: 16px; border-bottom: 2px solid var(--ink);
+}
+.reader-top div { display: grid; gap: 6px; }
+.reader-top h2 { font-size: clamp(1.9rem, 1.5rem + 2vw, 2.6rem); font-weight: 800; font-stretch: 90%; line-height: 1.05; }
+.signout {
+  font: inherit; font-size: .9rem; font-weight: 700; padding: 9px 16px; border-radius: 6px; cursor: pointer;
+  border: 1px solid var(--muted); background: transparent; color: var(--ink);
+}
+.signout:hover { border-color: var(--ink); }
+.toc { display: grid; gap: 8px; }
+.toc p { font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
+.toc ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 22px; }
+.toc button {
+  font: inherit; font-size: .95rem; font-weight: 650; color: var(--accent); text-align: left;
+  background: none; border: 0; padding: 0; cursor: pointer;
+}
+.toc button:hover { text-decoration: underline; text-underline-offset: 3px; }
+#notes-out { font-family: var(--text); font-size: 1.15rem; line-height: 1.65; min-width: 0; overflow-wrap: anywhere; }
+#notes-out h2, #notes-out h3, #notes-out h4 { font-family: var(--display); text-wrap: balance; }
+#notes-out h2 { font-size: 1.55rem; font-weight: 800; font-stretch: 95%; line-height: 1.15; margin: 44px 0 14px; padding-top: 20px; border-top: 1px solid var(--rule); }
+#notes-out > h2:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+#notes-out h3 { font-size: 1.15rem; font-weight: 700; line-height: 1.25; margin: 28px 0 8px; }
+#notes-out h4 { font-size: .8rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 22px 0 6px; }
+#notes-out p { margin: 0 0 16px; }
+#notes-out ul, #notes-out ol { margin: 0 0 18px; padding-left: 1.4em; }
+#notes-out li { margin-bottom: 6px; padding-left: 2px; }
+#notes-out li::marker { color: var(--accent); }
+#notes-out strong { font-weight: 700; }
+#notes-out blockquote { margin: 0 0 18px; padding: 14px 18px; background: var(--surface); border-radius: 6px; font-style: italic; }
+#notes-out hr { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
+</style>
+</head>
+<body>
+<h1 class="sr-only">Tamarack News</h1>
+
+<div class="utility"><div class="container">
+  <span id="today">Saturday, October 10, 2026</span>
+  <span>National edition</span>
+</div></div>
+
+<header class="mast"><div class="container">
+  <a class="brand" href="#top" aria-label="Tamarack News, front page">
+    <svg class="mark" viewBox="0 0 40 40" aria-hidden="true">
+      <rect class="bg" width="40" height="40" rx="6"/>
+      <polygon class="tree" points="20,6 28,16 23.5,16 30,25 25,25 32,34 8,34 15,25 10,25 16.5,16 12,16"/>
+    </svg>
+    <span class="word"><b>TAMARACK</b><span>NEWS</span></span>
+  </a>
+  <span class="tagline">News from coast to coast to coast</span>
+</div></header>
+
+<nav class="sections" aria-label="Sections"><div class="container"><ul>
+  <li><a href="#top" aria-current="page">Top Stories</a></li>
+  <li><a href="#canada">Canada</a></li>
+  <li><a href="#world">World</a></li>
+  <li><a href="#politics">Politics</a></li>
+  <li><a href="#business">Business</a></li>
+  <li><a href="#health">Health</a></li>
+  <li><a href="#climate">Climate</a></li>
+  <li><a href="#tech">Tech</a></li>
+  <li><a href="#sports">Sports</a></li>
+  <li><a href="#local">Local</a></li>
+</ul></div></nav>
+
+<main id="home">
+  <div class="container live">
+    <span class="live-tag">Live</span>
+    <p>Frost watch: updates as Prairie growers race the cold to finish the harvest</p>
+  </div>
+
+  <section class="container block" id="top" aria-labelledby="h-top">
+    <h2 class="sec-head" id="h-top">Top stories</h2>
+    <div class="top-grid">
+      <div class="top-main">
+        <article class="lead" id="canada">
+          <svg class="art" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustration: a grain elevator and a combine on a frosty prairie field at sunrise">
+            <defs>
+              <linearGradient id="sk1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fb3d1"/><stop offset=".55" stop-color="#e9d4b4"/><stop offset="1" stop-color="#f6e6cc"/></linearGradient>
+              <linearGradient id="fd1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfa452"/><stop offset="1" stop-color="#7e5a20"/></linearGradient>
+            </defs>
+            <rect width="800" height="450" fill="url(#sk1)"/>
+            <circle cx="650" cy="262" r="54" fill="#fff3d6"/>
+            <path d="M0 286 L800 286 L800 278 Q600 270 420 276 Q200 282 0 274Z" fill="#9b8a76"/>
+            <g fill="#33292a">
+              <rect x="140" y="150" width="74" height="136"/>
+              <polygon points="134,150 177,108 220,150"/>
+              <rect x="164" y="88" width="26" height="24"/>
+              <polygon points="160,88 177,74 194,88"/>
+              <rect x="214" y="218" width="64" height="68"/>
+              <polygon points="214,218 246,198 278,218"/>
+            </g>
+            <rect x="148" y="166" width="58" height="9" fill="#b51d33"/>
+            <rect y="286" width="800" height="164" fill="url(#fd1)"/>
+            <g fill="none" stroke="#f2d18e" stroke-width="3" opacity=".5"><path d="M0 318 L800 300"/><path d="M0 356 L800 326"/><path d="M0 404 L800 360"/><path d="M0 450 L800 398"/></g>
+            <rect y="286" width="800" height="54" fill="#ffffff" opacity=".28"/>
+            <ellipse cx="640" cy="284" rx="80" ry="12" fill="#f6e6cc" opacity=".6"/>
+            <g fill="#23303b">
+              <rect x="452" y="246" width="128" height="42" rx="5"/>
+              <rect x="528" y="216" width="46" height="34" rx="4"/>
+              <rect x="404" y="270" width="54" height="10"/>
+              <rect x="566" y="232" width="40" height="7"/>
+            </g>
+            <rect x="535" y="222" width="32" height="18" fill="#f6e6cc" opacity=".75"/>
+            <circle cx="486" cy="292" r="17" fill="#1a232c"/>
+            <circle cx="556" cy="294" r="13" fill="#1a232c"/>
+          </svg>
+          <p class="kicker">Canada</p>
+          <h3>Early frost sweeps the Prairies as growers race to finish the harvest</h3>
+          <p class="dek">Temperatures dropped well below freezing overnight across parts of Saskatchewan and Manitoba, and some farm families kept combines running past midnight to bring in the last of the canola.</p>
+          <p class="meta">By Tamarack News staff · Updated 2 hours ago</p>
+        </article>
+
+        <div class="pair">
+          <article class="story" id="climate">
+            <svg class="art" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustration: golden larch trees among dark spruce on a lakeshore">
+              <defs><linearGradient id="sk2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a9c8dc"/><stop offset="1" stop-color="#e8efee"/></linearGradient></defs>
+              <rect width="800" height="450" fill="url(#sk2)"/>
+              <path d="M0 220 Q180 168 380 206 T800 186 V330 H0Z" fill="#7d958a"/>
+              <path d="M0 262 Q260 226 520 256 T800 244 V330 H0Z" fill="#48635a"/>
+              <rect y="330" width="800" height="120" fill="#86a7b8"/>
+              <g fill="#e3a628" opacity=".32">
+                <polygon points="88,494 116,330 60,330"/><polygon points="200,524 232,330 168,330"/><polygon points="318,474 342,330 294,330"/>
+                <polygon points="478,512 508,330 448,330"/><polygon points="652,490 680,330 624,330"/><polygon points="742,464 764,330 720,330"/>
+              </g>
+              <g fill="#1f3a31">
+                <polygon points="150,196 172,330 128,330"/><polygon points="392,176 416,330 368,330"/><polygon points="566,204 586,330 546,330"/><polygon points="252,222 268,330 236,330"/>
+              </g>
+              <g fill="#e3a628">
+                <polygon points="88,166 116,330 60,330"/><polygon points="200,136 232,330 168,330"/><polygon points="318,186 342,330 294,330"/>
+                <polygon points="478,148 508,330 448,330"/><polygon points="652,170 680,330 624,330"/><polygon points="742,196 764,330 720,330"/>
+              </g>
+              <g fill="#c4831a">
+                <polygon points="88,166 116,330 88,330"/><polygon points="200,136 232,330 200,330"/><polygon points="318,186 342,330 318,330"/>
+                <polygon points="478,148 508,330 478,330"/><polygon points="652,170 680,330 652,330"/><polygon points="742,196 764,330 742,330"/>
+              </g>
+              <g stroke="#e8efee" stroke-width="2" opacity=".6"><path d="M80 362h120"/><path d="M300 386h160"/><path d="M560 368h140"/><path d="M180 416h120"/></g>
+            </svg>
+            <p class="kicker">Climate</p>
+            <h3>Why the larches turn gold in October, then let their needles go</h3>
+            <p class="sum">The tamarack is one of the few conifers that drops its needles every fall.</p>
+            <p class="meta">3 hours ago</p>
+          </article>
+
+          <article class="story" id="business">
+            <svg class="art" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustration: a small-town grocery storefront with a striped awning and crates of produce">
+              <defs><pattern id="aw3" width="44" height="10" patternUnits="userSpaceOnUse"><rect width="22" height="10" fill="#2e6b4f"/><rect x="22" width="22" height="10" fill="#f1ece2"/></pattern></defs>
+              <rect width="800" height="450" fill="#cdbfa8"/>
+              <rect x="70" y="40" width="660" height="350" fill="#8a3a2c"/>
+              <rect x="110" y="62" width="580" height="62" rx="3" fill="#15263a"/>
+              <text x="400" y="105" text-anchor="middle" font-family="Archivo, Arial, sans-serif" font-weight="800" font-size="30" letter-spacing="8" fill="#f3e3c3">CORNER MARKET</text>
+              <polygon points="96,144 704,144 730,196 70,196" fill="url(#aw3)"/>
+              <rect x="110" y="212" width="250" height="164" fill="#f3d9a0"/>
+              <rect x="516" y="212" width="174" height="164" fill="#f3d9a0"/>
+              <g fill="#c9a86a"><rect x="110" y="300" width="250" height="6"/><rect x="516" y="300" width="174" height="6"/></g>
+              <g fill="#c0392b"><circle cx="140" cy="290" r="10"/><circle cx="162" cy="290" r="10"/><circle cx="184" cy="290" r="10"/><circle cx="545" cy="290" r="10"/><circle cx="567" cy="290" r="10"/></g>
+              <g fill="#e67e22"><circle cx="230" cy="290" r="10"/><circle cx="252" cy="290" r="10"/><circle cx="274" cy="290" r="10"/><circle cx="620" cy="290" r="10"/><circle cx="642" cy="290" r="10"/></g>
+              <rect x="390" y="212" width="96" height="178" fill="#2a1f1c"/>
+              <rect x="404" y="226" width="68" height="84" fill="#f3d9a0" opacity=".85"/>
+              <circle cx="474" cy="320" r="5" fill="#e3a628"/>
+              <rect y="390" width="800" height="60" fill="#9a958e"/>
+              <g fill="#a0703e"><rect x="120" y="352" width="96" height="44"/><rect x="224" y="352" width="96" height="44"/><rect x="560" y="352" width="110" height="44"/></g>
+              <g fill="#4e8a3a"><circle cx="140" cy="350" r="12"/><circle cx="166" cy="348" r="12"/><circle cx="192" cy="350" r="12"/></g>
+              <g fill="#c0392b"><circle cx="244" cy="350" r="11"/><circle cx="270" cy="348" r="11"/><circle cx="296" cy="350" r="11"/></g>
+              <g fill="#e07b24"><ellipse cx="588" cy="346" rx="20" ry="15"/><ellipse cx="642" cy="346" rx="20" ry="15"/><ellipse cx="615" cy="336" rx="18" ry="14"/></g>
+            </svg>
+            <p class="kicker">Business</p>
+            <h3>Small-town grocers team up to share delivery trucks and cut costs</h3>
+            <p class="sum">Six independent stores now split one weekly route, and say their shelves are fuller for it.</p>
+            <p class="meta">4 hours ago</p>
+          </article>
+        </div>
+      </div>
+
+      <aside class="most-read" aria-labelledby="h-most">
+        <h2 id="h-most">Most read</h2>
+        <ol>
+          <li>Late goal gives the Port Elder Mariners their first win of the season</li>
+          <li>Why the larches turn gold in October, then let their needles go</li>
+          <li>What a frost watch means for your garden, and what to cover tonight</li>
+          <li>Port Elder council votes to keep its outdoor rink open until March</li>
+          <li>A lantern festival on the water sells out its opening night</li>
+        </ol>
+      </aside>
+    </div>
+  </section>
+
+  <section class="container block" aria-labelledby="h-more">
+    <h2 class="sec-head" id="h-more">More news</h2>
+    <div class="grid3">
+      <article class="story">
+        <svg class="art" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustration: a red-and-white lighthouse and keeper's cottage on a rocky point">
+          <defs><linearGradient id="sk10" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9cc6e0"/><stop offset="1" stop-color="#e6f0f4"/></linearGradient></defs>
+          <rect width="800" height="450" fill="url(#sk10)"/>
+          <g fill="#ffffff" opacity=".85"><ellipse cx="150" cy="90" rx="90" ry="22"/><ellipse cx="640" cy="70" rx="110" ry="24"/></g>
+          <rect y="300" width="800" height="150" fill="#3a7393"/>
+          <path d="M250 300 Q340 248 470 250 Q610 252 720 300Z" fill="#6d6a5f"/>
+          <path d="M300 280 Q390 242 480 244 Q600 246 690 288 Q570 268 470 266 Q390 266 300 280Z" fill="#6f8f4e"/>
+          <polygon points="440,110 476,110 488,262 428,262" fill="#f4f1ea"/>
+          <polygon points="436.8,150 479.2,150 481.5,180 434.5,180" fill="#c01530"/>
+          <polygon points="432.1,210 483.9,210 485.9,236 430.1,236" fill="#c01530"/>
+          <rect x="430" y="102" width="56" height="8" fill="#1f2a36"/>
+          <rect x="442" y="76" width="32" height="26" fill="#ffe7a3"/>
+          <polygon points="436,76 458,56 480,76" fill="#c01530"/>
+          <rect x="520" y="228" width="90" height="44" fill="#f4f1ea"/>
+          <polygon points="512,230 565,198 618,230" fill="#c01530"/>
+          <rect x="556" y="246" width="16" height="26" fill="#1f2a36"/>
+          <g fill="#7fb0cc"><rect x="530" y="240" width="16" height="14"/><rect x="584" y="240" width="16" height="14"/></g>
+          <g stroke="#e6f0f4" stroke-width="3" opacity=".55"><path d="M60 340h140"/><path d="M520 356h160"/><path d="M220 398h180"/><path d="M600 420h120"/></g>
+        </svg>
+        <p class="kicker">Canada</p>
+        <h3>A lighthouse keeper's cottage reopens as a small seaside museum</h3>
+        <p class="sum">The restored cottage at Cape Sorrel tells the story of the families who kept the light burning for 90 years.</p>
+        <p class="meta">9 hours ago</p>
+      </article>
+
+      <article class="story" id="world">
+        <svg class="art" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustration: a container ship at sea as storm clouds clear">
+          <defs><linearGradient id="sk5" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4f5f71"/><stop offset="1" stop-color="#c9d4dc"/></linearGradient></defs>
+          <rect width="800" height="450" fill="url(#sk5)"/>
+          <polygon points="520,0 640,0 760,300 600,300" fill="#fff6dd" opacity=".18"/>
+          <g fill="#3c4a5a"><ellipse cx="160" cy="70" rx="200" ry="56"/><ellipse cx="380" cy="40" rx="180" ry="50"/><ellipse cx="760" cy="60" rx="160" ry="44"/></g>
+          <rect y="300" width="800" height="150" fill="#24435c"/>
+          <rect x="270" y="268" width="56" height="26" fill="#c01530"/><rect x="328" y="268" width="56" height="26" fill="#e3a628"/>
+          <rect x="386" y="268" width="56" height="26" fill="#2e6b4f"/><rect x="444" y="268" width="56" height="26" fill="#3b6fb3"/>
+          <rect x="300" y="242" width="56" height="26" fill="#3b6fb3"/><rect x="358" y="242" width="56" height="26" fill="#c01530"/><rect x="416" y="242" width="56" height="26" fill="#e3a628"/>
+          <rect x="520" y="226" width="54" height="68" fill="#e9edf2"/>
+          <rect x="526" y="234" width="42" height="8" fill="#24435c"/>
+          <rect x="540" y="206" width="16" height="22" fill="#c01530"/>
+          <polygon points="230,294 610,294 590,334 252,334" fill="#1b2128"/>
+          <path d="M0 344 Q40 332 80 344 T160 344 T240 344 T320 344 T400 344 T480 344 T560 344 T640 344 T720 344 T800 344 V450 H0Z" fill="#2c5572"/>
+          <path d="M0 392 Q50 378 100 392 T200 392 T300 392 T400 392 T500 392 T600 392 T700 392 T800 392 V450 H0Z" fill="#33627f"/>
+        </svg>
+        <p class="kicker">World</p>
+        <h3>Shipping lanes reopen in the North Atlantic after a week of autumn storms</h3>
+        <p class="sum">Freighters that waited out the weather in port are moving again, and crews are working through the backlog.</p>
+        <p class="meta">5 hours ago</p>
+      </article>
+
+      <article class="story" id="politics">
+        <svg class="art" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustration: an outdoor community rink at night under strings of lights">
+          <defs><linearGradient id="sk6" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0e1c34"/><stop offset="1" stop-color="#2f4666"/></linearGradient></defs>
+          <rect width="800" height="450" fill="url(#sk6)"/>
+          <g fill="#ffffff"><circle cx="80" cy="50" r="1.8"/><circle cx="210" cy="84" r="1.4"/><circle cx="330" cy="40" r="1.8"/><circle cx="520" cy="66" r="1.4"/><circle cx="610" cy="30" r="1.8"/><circle cx="740" cy="92" r="1.6"/><circle cx="440" cy="100" r="1.2"/></g>
+          <g fill="#14233a"><polygon points="40,262 70,170 100,262"/><polygon points="90,262 116,190 142,262"/><polygon points="690,262 720,176 750,262"/><polygon points="740,262 768,196 796,262"/></g>
+          <rect y="250" width="800" height="200" fill="#dfe8f0"/>
+          <polygon points="140,300 660,300 740,420 60,420" fill="#bcd8ec"/>
+          <polygon points="140,300 660,300 740,420 60,420" fill="none" stroke="#6f4b2f" stroke-width="8" stroke-linejoin="round"/>
+          <g fill="#26354a"><rect x="120" y="120" width="6" height="182"/><rect x="674" y="120" width="6" height="182"/></g>
+          <path d="M123 124 Q400 210 677 124" fill="none" stroke="#26354a" stroke-width="2"/>
+          <g fill="#ffd36b" opacity=".28">
+            <circle cx="178" cy="139" r="12"/><circle cx="234" cy="151" r="12"/><circle cx="289" cy="160" r="12"/><circle cx="345" cy="165" r="12"/><circle cx="400" cy="167" r="12"/>
+            <circle cx="455" cy="165" r="12"/><circle cx="511" cy="160" r="12"/><circle cx="566" cy="151" r="12"/><circle cx="622" cy="139" r="12"/>
+          </g>
+          <g fill="#ffd36b">
+            <circle cx="178" cy="139" r="5"/><circle cx="234" cy="151" r="5"/><circle cx="289" cy="160" r="5"/><circle cx="345" cy="165" r="5"/><circle cx="400" cy="167" r="5"/>
+            <circle cx="455" cy="165" r="5"/><circle cx="511" cy="160" r="5"/><circle cx="566" cy="151" r="5"/><circle cx="622" cy="139" r="5"/>
+          </g>
+          <g fill="#eef3f8"><ellipse cx="40" cy="300" rx="110" ry="26"/><ellipse cx="770" cy="306" rx="100" ry="24"/></g>
+        </svg>
+        <p class="kicker">Politics</p>
+        <h3>Port Elder council votes to keep its outdoor rink open until March</h3>
+        <p class="sum">Volunteers will take over the evening flooding so the town can stretch its budget across a longer season.</p>
+        <p class="meta">6 hours ago</p>
+      </article>
+
+      <article class="story" id="health">
+        <svg class="art" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustration: pharmacy shelves with a few empty spaces among the boxes">
+          <defs><pattern id="sh9" width="120" height="90" patternUnits="userSpaceOnUse">
+            <rect x="4" y="30" width="30" height="56" fill="#3b6fb3"/><rect x="36" y="40" width="26" height="46" fill="#f1ece2"/>
+            <rect x="64" y="22" width="22" height="64" fill="#c01530"/><rect x="88" y="44" width="28" height="42" fill="#2e6b4f"/>
+            <rect x="0" y="86" width="120" height="4" fill="#9aa5b1"/></pattern></defs>
+          <rect width="800" height="450" fill="#e7ecf1"/>
+          <rect x="40" y="20" width="720" height="410" fill="#cfd7e0"/>
+          <rect x="56" y="34" width="688" height="384" fill="url(#sh9)"/>
+          <g fill="#cfd7e0"><rect x="300" y="106" width="190" height="70"/><rect x="560" y="196" width="150" height="70"/></g>
+          <g fill="#e3a628"><rect x="330" y="176" width="24" height="10"/><rect x="600" y="266" width="24" height="10"/></g>
+        </svg>
+        <p class="kicker">Health</p>
+        <h3>Pharmacists say cold remedies are selling out earlier than usual this fall</h3>
+        <p class="sum">Some stores are restocking twice a week as the season's first colds arrive.</p>
+        <p class="meta">6 hours ago</p>
+      </article>
+
+      <article class="story" id="tech">
+        <svg class="art" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustration: a smartphone, glasses and a mug on a library table in front of bookshelves">
+          <defs><pattern id="bk7" width="64" height="74" patternUnits="userSpaceOnUse">
+            <rect x="0" y="12" width="12" height="60" fill="#2e6b4f"/><rect x="13" y="4" width="10" height="68" fill="#c01530"/>
+            <rect x="24" y="16" width="14" height="56" fill="#e3a628"/><rect x="39" y="8" width="9" height="64" fill="#3b6fb3"/>
+            <rect x="49" y="20" width="13" height="52" fill="#7a5a8c"/><rect x="0" y="72" width="64" height="2" fill="#6b4a2f"/></pattern></defs>
+          <rect width="800" height="450" fill="#ead9bd"/>
+          <rect x="40" y="30" width="720" height="290" fill="#8a5f3c"/>
+          <rect x="56" y="44" width="688" height="262" fill="url(#bk7)"/>
+          <rect y="300" width="800" height="150" fill="#9c6a43"/>
+          <rect y="300" width="800" height="10" fill="#7d5233"/>
+          <g transform="rotate(-12 420 380)">
+            <rect x="350" y="300" width="140" height="250" rx="18" fill="#141b24"/>
+            <rect x="360" y="314" width="120" height="220" rx="10" fill="#cfe6f5"/>
+            <g fill="#3b6fb3"><rect x="374" y="330" width="24" height="24" rx="6"/><rect x="408" y="330" width="24" height="24" rx="6"/><rect x="442" y="330" width="24" height="24" rx="6"/></g>
+            <g fill="#2e6b4f"><rect x="374" y="364" width="24" height="24" rx="6"/><rect x="408" y="364" width="24" height="24" rx="6"/></g>
+            <rect x="442" y="364" width="24" height="24" rx="6" fill="#c01530"/>
+          </g>
+          <g fill="none" stroke="#2a2a2a" stroke-width="4"><circle cx="610" cy="384" r="24"/><circle cx="670" cy="384" r="24"/><path d="M634 384h12"/></g>
+          <rect x="160" y="330" width="56" height="64" rx="6" fill="#f1ece2"/>
+          <path d="M216 344 q22 0 22 18 t-22 18" fill="none" stroke="#f1ece2" stroke-width="7"/>
+        </svg>
+        <p class="kicker">Tech</p>
+        <h3>Library tech nights help seniors set up their first smartphones</h3>
+        <p class="sum">Teen volunteers walk newcomers through texting, video calls and spotting scam messages.</p>
+        <p class="meta">7 hours ago</p>
+      </article>
+
+      <article class="story">
+        <svg class="art" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustration: paper lanterns floating on a harbour at dusk">
+          <defs>
+            <linearGradient id="sk8" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b2442"/><stop offset=".7" stop-color="#5a4570"/><stop offset="1" stop-color="#d98b6a"/></linearGradient>
+            <radialGradient id="ln8"><stop offset="0" stop-color="#ffe7a3"/><stop offset=".45" stop-color="#f4a93a" stop-opacity=".7"/><stop offset="1" stop-color="#f4a93a" stop-opacity="0"/></radialGradient>
+            <g id="lt8"><circle r="30" fill="url(#ln8)"/><rect x="-8" y="-10" width="16" height="20" rx="3" fill="#ffcf6e"/><ellipse cy="26" rx="12" ry="3" fill="#f4a93a" opacity=".5"/></g>
+          </defs>
+          <rect width="800" height="260" fill="url(#sk8)"/>
+          <g fill="#ffffff" opacity=".8"><circle cx="90" cy="40" r="1.5"/><circle cx="300" cy="70" r="1.3"/><circle cx="520" cy="36" r="1.5"/><circle cx="700" cy="80" r="1.3"/></g>
+          <rect y="250" width="800" height="200" fill="#1f2a44"/>
+          <rect y="252" width="800" height="40" fill="#d98b6a" opacity=".15"/>
+          <path d="M0 250 L120 236 L220 244 L340 230 L460 242 L600 228 L800 246 V262 H0Z" fill="#1a1b2c"/>
+          <use href="#lt8" transform="translate(130 296) scale(.8)"/>
+          <use href="#lt8" transform="translate(280 318) scale(1)"/>
+          <use href="#lt8" transform="translate(430 290) scale(.7)"/>
+          <use href="#lt8" transform="translate(570 334) scale(1.2)"/>
+          <use href="#lt8" transform="translate(700 304) scale(.9)"/>
+          <use href="#lt8" transform="translate(360 380) scale(1.5)"/>
+          <use href="#lt8" transform="translate(170 400) scale(1.6)"/>
+          <use href="#lt8" transform="translate(630 410) scale(1.7)"/>
+        </svg>
+        <p class="kicker">Entertainment</p>
+        <h3>A lantern festival on the water sells out its opening night</h3>
+        <p class="sum">Organizers of the Bay of Lanterns festival added a second launch after tickets went in under an hour.</p>
+        <p class="meta">8 hours ago</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="band" id="sports" aria-labelledby="h-sports"><div class="container">
+    <h2 class="sec-head" id="h-sports">Sports</h2>
+    <div class="sports-grid">
+      <article class="lead">
+        <svg class="art" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustration: a puck in the back of a hockey net under a lit goal light">
+          <defs>
+            <pattern id="cr4" width="16" height="14" patternUnits="userSpaceOnUse"><circle cx="8" cy="7" r="4.5" fill="#2a374a"/></pattern>
+            <pattern id="nt4" width="12" height="12" patternUnits="userSpaceOnUse"><path d="M0 0L12 12M12 0L0 12" stroke="#c9d1db" stroke-width="1.2"/></pattern>
+            <radialGradient id="gl4"><stop offset="0" stop-color="#ff4d5e"/><stop offset="1" stop-color="#ff4d5e" stop-opacity="0"/></radialGradient>
+          </defs>
+          <rect width="800" height="450" fill="#101925"/>
+          <rect width="800" height="150" fill="url(#cr4)"/>
+          <circle cx="400" cy="92" r="96" fill="url(#gl4)" opacity=".85"/>
+          <rect x="384" y="78" width="32" height="28" rx="6" fill="#ff5b6b"/>
+          <rect y="150" width="800" height="54" fill="#e8edf2"/>
+          <rect y="150" width="800" height="7" fill="#c01530"/>
+          <rect y="204" width="800" height="246" fill="#eef4f9"/>
+          <path d="M300 330 A100 56 0 0 0 500 330Z" fill="#9ccbf0" opacity=".75"/>
+          <rect x="318" y="236" width="164" height="94" fill="url(#nt4)"/>
+          <path d="M318 236 L346 216 H454 L482 236" fill="none" stroke="#c01530" stroke-width="4"/>
+          <path d="M318 330V236H482V330" fill="none" stroke="#c01530" stroke-width="8" stroke-linejoin="round"/>
+          <rect y="330" width="800" height="4" fill="#c01530" opacity=".7"/>
+          <ellipse cx="420" cy="314" rx="16" ry="7" fill="#0d0f12"/>
+          <g fill="#ffffff" opacity=".85"><ellipse cx="230" cy="396" rx="70" ry="8"/><ellipse cx="300" cy="380" rx="30" ry="5"/></g>
+          <rect y="420" width="800" height="10" fill="#2a5db0"/>
+        </svg>
+        <p class="kicker">Hockey</p>
+        <h3>Late goal gives the Port Elder Mariners their first win of the season</h3>
+        <p class="dek">A wrist shot with 41 seconds left lifted the junior club past its rival 3–2 in front of a packed home rink.</p>
+        <p class="meta">1 hour ago</p>
+      </article>
+      <div class="side">
+        <article class="story">
+          <p class="kicker">Curling</p>
+          <h3>Prairie curling club hosts its first junior bonspiel in a decade</h3>
+          <p class="sum">Sixteen youth teams signed up, and the club ran out of loaner brooms by the second draw.</p>
+          <p class="meta">3 hours ago</p>
+        </article>
+        <article class="story">
+          <p class="kicker">Soccer</p>
+          <h3>Under-12 girls' team raises money for new goals with a bottle drive</h3>
+          <p class="sum">Players and parents collected more than 9,000 cans and bottles in a single weekend.</p>
+          <p class="meta">5 hours ago</p>
+        </article>
+        <article class="story">
+          <p class="kicker">Running</p>
+          <h3>Fall trail race draws a record field despite the first snowflakes</h3>
+          <p class="sum">Volunteers handed out hot cider at the finish line and toques to anyone who forgot one.</p>
+          <p class="meta">6 hours ago</p>
+        </article>
+      </div>
+    </div>
+  </div></section>
+
+  <section class="container block" id="local" aria-labelledby="h-local">
+    <h2 class="sec-head" id="h-local">Local news</h2>
+    <ul class="local-grid">
+      <li><p class="kicker">Halifax</p><h3>Volunteers plant 400 trees along a waterfront trail</h3><p class="meta">1 hour ago</p></li>
+      <li><p class="kicker">Montréal</p><h3>Neighbourhood bakery marks 50 years with a morning of free croissants</h3><p class="meta">2 hours ago</p></li>
+      <li><p class="kicker">Toronto</p><h3>A corner bookshop finds a second life as a community reading room</h3><p class="meta">3 hours ago</p></li>
+      <li><p class="kicker">Winnipeg</p><h3>Community rink crews start flooding early after a cold week</h3><p class="meta">4 hours ago</p></li>
+      <li><p class="kicker">Calgary</p><h3>Grade 8 students build a working weather station on their school roof</h3><p class="meta">5 hours ago</p></li>
+      <li><p class="kicker">Vancouver</p><h3>The rain is back, and so are the mushroom foragers</h3><p class="meta">6 hours ago</p></li>
+    </ul>
+  </section>
+</main>
+
+<main id="signin" class="container signin" hidden>
+  <div class="signin-card">
+    <p class="kicker">Reader account</p>
+    <h2>Reader sign-in</h2>
+    <p class="body">Enter your password to open your saved reading.</p>
+    <form class="signin-form" id="signin-form" novalidate>
+      <div class="field">
+        <label for="pw">Password</label>
+        <input id="pw" name="password" type="password" autocomplete="current-password" required>
+      </div>
+      <p class="error" id="pw-error" role="alert" hidden></p>
+      <button class="btn" id="pw-submit" type="submit">Sign in</button>
+    </form>
+    <p class="fine">Saved reading is encrypted. Only the right password can open it, and nothing is kept on this device after you sign out or close the page.</p>
+    <a class="back" href="#top">← Back to the front page</a>
+  </div>
+</main>
+
+<main id="reader" class="container reader" hidden>
+  <div class="reader-wrap">
+    <div class="reader-top">
+      <div>
+        <p class="kicker">Saved reading</p>
+        <h2>Study notes</h2>
+      </div>
+      <button class="signout" id="signout" type="button">Sign out</button>
+    </div>
+    <nav class="toc" id="toc" aria-label="Sections" hidden>
+      <p>Sections</p>
+      <ul id="toc-list"></ul>
+    </nav>
+    <article id="notes-out"></article>
+  </div>
+</main>
+
+<footer class="foot"><div class="container">
+  <a class="brand" href="#top" aria-label="Tamarack News, front page">
+    <svg class="mark" viewBox="0 0 40 40" aria-hidden="true">
+      <rect class="bg" width="40" height="40" rx="6"/>
+      <polygon class="tree" points="20,6 28,16 23.5,16 30,25 25,25 32,34 8,34 15,25 10,25 16.5,16 12,16"/>
+    </svg>
+    <span class="word"><b>TAMARACK</b><span>NEWS</span></span>
+  </a>
+  <p>Tamarack News is a personal prototype. All stories, names and pictures on this page are fictional.</p>
+  <div class="foot-row">
+    <span>© 2026 Tamarack News</span>
+    <a class="quiet" href="#signin">Reader sign-in</a>
+  </div>
+</div></footer>
+
+<!-- Encrypted study notes (AES-256-GCM, key from the password via PBKDF2-SHA256).
+     Unreadable without the password. Claude replaces this block when the notes change. -->
+<script type="application/json" id="vault">{"v": 1, "kdf": "PBKDF2-SHA256", "iter": 600000, "salt": "+jse03Ac8FMruoU1ynu6Mw==", "iv": "VW3WKQ0a1DZKC5dO", "data": "YodTIh49AmcoH5D4+qb8YYVpJ3gY0cDjlWudjq9K8nSQQcwcdDLV6uAZeVp0bVx21pf6KrZtLGjCZtnRul/0mqzydrdP695rlTj3A9mFeapqxHz0UPgbQ7bJk0ejlANIEX0ZNi76nB55FOd9UIpZCr1UarjGmP9OCuccUqPC7WuarlUBkw+kqcTU67K5kYtglSng/dwtYtYEa7gKbBcGKMswsiPDHTakPhpCYEtehqk4/5OoWolJrbcXDy7YWacRP2MjYGSRavqLOhlMMAlFOwzNo81TVpMqYnoh7m6glvtrwn2BPYadH6j9zcDIcOCCNFD9QBNoDpE/ZwGMc5pBC+72nDkh2aEHZd5rSyFFe4DZec9TXVw9GZTVrCNxmobFanyioNcPV6Q+ZmMlxgQtneBxvBMNqp/59FVijbFeUcViHy7ft8my/NBd2beEOHNEk3FDeb8e/ciSz4HevYZBCld+SO+yNvHyDXyxjHk9tGh6ruQiMis08H/gHvyHj1X2FHjrxFfC8KP0mGzge8CX13o2H6r05nTlHqxM2Khlv0+I3ZMSplPGUIn2lL9JRUjtSt2/H3SnUq8tWsLagoJBM+joqUkO1hpE2Pf2zLI7e92J9vxhjhpnmN3yO3r0FPLH+awt+rP1Sqdn+XEqO7KyaxnacJ0RuDuulMOlT8UDS1fVVF1i0JqwxxrFqDtJHZUeEsxioJBujJun6obGsWOTHI/ru1mZYCr0Q8LoUDaL1EvzQO8iUt5AqQm0x2SG7CRD6xu3/1ud+bLfIJ6tlCS9yq3mIrPwe9dc5PkDepbtzoWBXQgJAgIL+H6uwEaQwDUG0tWmzGau+O8MCZGKFsje9azIdecEvibmaML8Iqa/IIDw8V4tG0JHASRCIIGv0OLrpYREUxForVKPkhqswe2+NircwomJqX1zwVCwgbmWcacexhMPsmoDXuEF2Tg7H2vFbWc9roj0cCMYnskP7kxYLA7MjJTDH6wPLGVPIiFa+aub79Zv3F6RDJRQN024wEtAutyWgt2Ho9TnQFf97V/fjMdBxWi7U+zD3f2NNuK94ZnT4eIof2L9Xp49qCp5Mdgx/fk0HKWwNASMGQrhUJBtHeVlxlAFkbdDkAPEQVoystVeKspFzRCYo7Yj5KUJ4z52kiHbgMfr1fFYDo41VWuTJoSZgzoHKysbbctXdjml9HIYV7rS0esRjCrbhlpCTwtvFXjTQiV5XXsILM3EA9CMgeNfq3H6OeYUIox+QUx86JdtdTY1Kf9l/ZrfRDwnVcQmJRAKQz57s+43xGLcUqrW2y1QeRNvjMVRJNDPDY3iMGPYi8ciTuVexAoVEbHGYYcgBCsRRw/ifpM5wczSOYt3nhJakBQPyfE/naowq4ZPajf6IW5uTBRWiIKGIwNXAJUDOb203i4xAOWpqryUlEYYoIlrkkRYiuJpjgUrOxhlklWZ0qVoLRGp26L6wb0QmFfI8FhIfo8pzq8HeDytppdjRZG0jxZRPKeDElbVzGJQa/6zBmX6OkV1AZXgqrCbr8Fs"}</script>
+
+<script>
+(function () {
+  try {
+    document.getElementById('today').textContent = new Date().toLocaleDateString('en-CA', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+  } catch (e) {}
+
+  var home = document.getElementById('home');
+  var signin = document.getElementById('signin');
+  var reader = document.getElementById('reader');
+  var out = document.getElementById('notes-out');
+  var toc = document.getElementById('toc');
+  var tocList = document.getElementById('toc-list');
+  var form = document.getElementById('signin-form');
+  var pw = document.getElementById('pw');
+  var err = document.getElementById('pw-error');
+  var submit = document.getElementById('pw-submit');
+  var unlocked = false;
+
+  function route() {
+    var h = location.hash;
+    var onSignin = h === '#signin';
+    home.hidden = onSignin;
+    signin.hidden = !onSignin || unlocked;
+    reader.hidden = !onSignin || !unlocked;
+    if (onSignin) { window.scrollTo(0, 0); return; }
+    var el = h && h.length > 1 ? document.getElementById(h.slice(1)) : null;
+    if (el) el.scrollIntoView();
+  }
+  window.addEventListener('hashchange', route);
+  route();
+
+  /* ---- Decryption ---- */
+  function bytes(b64) {
+    var bin = atob(b64), a = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) a[i] = bin.charCodeAt(i);
+    return a;
+  }
+  async function decrypt(password) {
+    var v = JSON.parse(document.getElementById('vault').textContent);
+    var base = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveKey']);
+    var key = await crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt: bytes(v.salt), iterations: v.iter, hash: 'SHA-256' },
+      base, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+    var plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: bytes(v.iv) }, key, bytes(v.data));
+    return new TextDecoder().decode(plain);
+  }
+
+  /* ---- Notes formatting ---- */
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function inline(s) {
+    return esc(s)
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*([^*\s][^*]*?)\*/g, '<em>$1</em>');
+  }
+  function render(src) {
+    var html = [], para = [], quote = [], list = null, sections = [], n = 0;
+    function flushPara() { if (para.length) { html.push('<p>' + para.map(inline).join('<br>') + '</p>'); para = []; } }
+    function flushQuote() { if (quote.length) { html.push('<blockquote>' + quote.map(inline).join('<br>') + '</blockquote>'); quote = []; } }
+    function flushList() {
+      if (list) {
+        html.push('<' + list.tag + '>' + list.items.map(function (i) { return '<li>' + inline(i) + '</li>'; }).join('') + '</' + list.tag + '>');
+        list = null;
+      }
+    }
+    function flushAll() { flushPara(); flushQuote(); flushList(); }
+    function addItem(tag, text) {
+      flushPara(); flushQuote();
+      if (!list || list.tag !== tag) { flushList(); list = { tag: tag, items: [] }; }
+      list.items.push(text);
+    }
+    src.replace(/\r\n?/g, '\n').split('\n').forEach(function (raw) {
+      var t = raw.trim(), m;
+      if (!t) { flushAll(); return; }
+      if ((m = t.match(/^(#{1,3})\s+(.+)$/))) {
+        flushAll();
+        var level = m[1].length + 1, id = 'note-' + (++n);
+        if (level === 2) sections.push({ id: id, text: m[2] });
+        html.push('<h' + level + ' id="' + id + '">' + inline(m[2]) + '</h' + level + '>');
+        return;
+      }
+      if (/^(-{3,}|\*{3,}|_{3,})$/.test(t)) { flushAll(); html.push('<hr>'); return; }
+      if ((m = t.match(/^[-*•]\s+(.+)$/))) { addItem('ul', m[1]); return; }
+      if ((m = t.match(/^\d+[.)]\s+(.+)$/))) { addItem('ol', m[1]); return; }
+      if ((m = t.match(/^>\s?(.*)$/))) { flushPara(); flushList(); quote.push(m[1]); return; }
+      flushQuote(); flushList(); para.push(t);
+    });
+    flushAll();
+    out.innerHTML = html.join('\n');
+    tocList.innerHTML = sections.map(function (s) {
+      return '<li><button type="button" data-target="' + s.id + '">' + inline(s.text) + '</button></li>';
+    }).join('');
+    toc.hidden = sections.length < 2;
+  }
+  tocList.addEventListener('click', function (e) {
+    var a = e.target.closest('button[data-target]');
+    if (!a) return;
+    e.preventDefault();
+    var el = document.getElementById(a.getAttribute('data-target'));
+    if (el) el.scrollIntoView();
+  });
+
+  /* ---- Sign in / sign out ---- */
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    err.hidden = true;
+    if (!pw.value) { err.textContent = 'Enter your password.'; err.hidden = false; pw.focus(); return; }
+    if (!window.crypto || !crypto.subtle) {
+      err.textContent = "This browser can't open encrypted reading. Try an up-to-date version of Chrome, Safari, Firefox or Edge.";
+      err.hidden = false; return;
+    }
+    submit.disabled = true; submit.textContent = 'Signing in…';
+    try {
+      render(await decrypt(pw.value));
+      unlocked = true;
+      pw.value = '';
+      route();
+    } catch (x) {
+      err.textContent = "That password didn't open your saved reading. Check it and try again.";
+      err.hidden = false;
+      pw.select();
+    } finally {
+      submit.disabled = false; submit.textContent = 'Sign in';
+    }
+  });
+
+  document.getElementById('signout').addEventListener('click', function () {
+    unlocked = false;
+    out.innerHTML = '';
+    tocList.innerHTML = '';
+    toc.hidden = true;
+    location.hash = '#top';
+    route();
+  });
+})();
+</script>
+</body>
+</html>
